@@ -1,6 +1,8 @@
+
 import { useState } from 'react' 
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios' 
+import validator from 'validator'
 export default function Register() {
     const navigate = useNavigate()
     const [username, setUsername] = useState('')
@@ -8,6 +10,33 @@ export default function Register() {
     const [email, setEmail] = useState('')
     const [role, setRole] = useState('') 
     const [serverErrors, setServerErrors] = useState(null)
+    // create a state variable
+    const [clientErrors, setClientErrors] = useState({})
+    // create a local variable
+    const errors = {}
+
+    const runValidations = () => {
+        
+        if(username.trim().length == 0) {
+            errors.username = 'username is required'
+        }
+
+        if(email.trim().length == 0) {
+            errors.email = 'email is required'
+        } else if(!validator.isEmail(email)) {
+            errors.email = 'invalid email format'
+        }
+
+        if(password.trim().length == 0) {
+            errors.password = 'password is required'
+        } else if(password.trim().length < 8 || password.trim().length > 128) {
+            errors.password = 'password should be between 8 - 128 characters'
+        }
+
+        if(role.trim().length == 0) {
+            errors.role = 'role is required'
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -18,12 +47,29 @@ export default function Register() {
             password: password, 
             role: role 
         }
-        // TODO - client side validation 
-        try {
-            const response = await axios.post('http://localhost:3333/users/register', formData) 
-            navigate('/login')
-        } catch(err) {
-            setServerErrors(err.response.data.errors)
+        
+        
+
+        runValidations()
+
+        if(Object.keys(errors).length == 0) {
+            try {
+                const response = await axios.post('http://localhost:3333/users/register', formData) 
+                navigate('/login')
+            } catch(err) {
+                setServerErrors(err.response.data.errors)
+            }
+        } else {
+            setClientErrors(errors)
+        }
+    }
+
+    const handleCheckEmail = async () => {
+        if(validator.isEmail(email)) {
+            const response = await axios.get(`http://localhost:3333/users/checkemail?email=${email}`) 
+            if(response.data.is_email_registered) {
+                setClientErrors({ email: 'email is already registered' })
+            }
         }
     }
 
@@ -42,6 +88,7 @@ export default function Register() {
                 </div> 
             )}
 
+           
 
             <form onSubmit={handleSubmit}>
                 <label htmlFor="username">Enter username</label><br />
@@ -50,21 +97,29 @@ export default function Register() {
                     value={username} 
                     onChange={e => setUsername(e.target.value)} 
                     id="username"
-                /> <br />
+                /> 
+                { clientErrors.username && <span> { clientErrors.username }</span>}
+                
+                <br />
                 <label htmlFor="email">Enter email</label><br />
                 <input 
                     type="text" 
                     value={email} 
                     onChange={e => setEmail(e.target.value)} 
+                    onBlur={handleCheckEmail}
                     id="email"
-                /> <br />
+                />
+                { clientErrors.email && <span> { clientErrors.email }</span>}
+                 <br />
                 <label htmlFor="password">Enter Password</label><br />
                 <input 
                     type="password" 
                     value={password} 
                     onChange={e => setPassword(e.target.value)} 
                     id="password"
-                /> <br />
+                /> 
+                { clientErrors.password && <span> { clientErrors.password }</span>}
+                <br />
                 <label>Select Role</label> <br /> 
                 <input 
                     type="radio" 
@@ -85,6 +140,7 @@ export default function Register() {
                     name="role" 
                 /> 
                 <label htmlFor="recruiter">Recruiter</label>
+                { clientErrors.role && <span> { clientErrors.role }</span>}
                 <br /> 
                 <input type="submit" />
             </form>
