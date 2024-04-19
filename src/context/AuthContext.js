@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react' 
+import React, { createContext, useContext, useState } from 'react'
+
 const AuthContext = createContext() 
 
 export const useAuth = () => {
@@ -9,11 +10,11 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null) 
 
     const handleLogin = (user) => {
-        setUser(user)
+        setUser(user) 
     }
 
     const handleLogout = () => {
-        setUser(null)
+        setUser(null) 
     }
 
     return (

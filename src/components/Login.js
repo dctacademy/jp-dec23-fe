@@ -41,7 +41,7 @@ export default function Login() {
             try { 
                 const response = await axios.post('http://localhost:3333/users/login', formData) 
                 localStorage.setItem('token', response.data.token)
-                const userResponse = await axios.get('http://localhost:3333/users/account', {
+                const userResponse = await axios.get('http://localhost:3333/users/account', { 
                     headers: {
                         Authorization: localStorage.getItem('token')
                     }
