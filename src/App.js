@@ -1,5 +1,4 @@
 import { Routes, Route, Link } from 'react-router-dom'
-import { useEffect } from 'react';
 import axios from 'axios';
 import Home from "./components/Home";
 import Register from "./components/Register";
@@ -7,56 +6,76 @@ import Login from "./components/Login";
 import Account from './components/Account';
 import AddJob from './components/AddJob';
 import ApplyJob from './components/ApplyJob';
-import { useAuth } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import Unauthorized from './components/Unauthorized';
+import { useAuth } from './context/AuthContext';
+import { useEffect } from 'react';
 
 function App() {
-  const { user, handleLogin,  handleLogout } = useAuth() 
+  
+  // const { user, handleLogout, handleLogin} = useAuth() 
+  const { user, dispatch} = useAuth() 
+
+  const conditionalLinks = (path, roles) => {
+    switch(path) {
+      case '/add-job' : {
+        if(roles.includes(user.account.role)) {
+          return <Link to={path}>Add Job</Link>
+        }
+      }
+      case '/apply-job' : {
+        if(roles.includes(user.account.role)) {
+          return <Link to={path}>Apply job</Link>
+        }
+      }
+    }
+  }
 
   useEffect(() => {
-    if(localStorage.getItem('token')) {
+    if(localStorage.getItem('token'))  {
       (async () => {
-        const response = await axios.get('http://localhost:3333/users/account', { 
-          headers : {
+        const response = await axios.get('http://localhost:3333/users/account', {
+          headers: {
             Authorization: localStorage.getItem('token')
           }
         })
-        handleLogin(response.data)
-      })() 
+        dispatch({ type: 'LOGIN', payload: response.data })
+      })();
     }
   }, [])
-
   return (
       <div>
         <h2>Job Portal</h2>
         <Link to="/">Home</Link> |
-            { !user ? (
-              <>
-                <Link to="/register">Register</Link> |
-                <Link to="/login"> Login </Link> | 
-              </> 
-            ): (
-              <>
-                  <Link to="/account">Account</Link> |
-                  { <Link to="/add-job">Add new Job</Link>}
-                  { <Link to="/apply-job">Apply Job</Link>}
-                  <Link to="/" onClick={() => {
-                    localStorage.removeItem('token')
-                    handleLogout()
-                  }}> Logout </Link> | 
-                </> 
-            )}
+        { !user.isLoggedIn ? (
+          <>
+          <Link to="/register">Register</Link> |
+          <Link to="/login"> Login </Link> | 
+          </>
+        ) : (
+          <>
+            <Link to="/account">Account</Link> | 
+            { conditionalLinks('/add-job', ['admin', 'recruiter'])}
+            { conditionalLinks('/apply-job', ['admin', 'candidate'])}
+            
+             |
+            <Link to="/" onClick={() => {
+              localStorage.removeItem('token')
+              dispatch({ type: 'LOGOUT'})
+            }}> logout </Link> | 
+          </>
+        )}
+        
+             
             
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/account" element={
-            <PrivateRoute permittedRoles={['recruiter', 'candidate']}>
+          <PrivateRoute permittedRoles={['recruiter', 'candidate']}>
               <Account />
-            </PrivateRoute>
-          } />
+          </PrivateRoute>} />
           <Route path="/add-job" element={
             <PrivateRoute permittedRoles={['recruiter']}>
               <AddJob />
@@ -64,11 +83,11 @@ function App() {
           } />
           <Route path="/apply-job" element={
             <PrivateRoute permittedRoles={['candidate']}>
-              <ApplyJob /> 
+              <ApplyJob />
             </PrivateRoute>
           } />
 
-          <Route path="/unauthorized" element={<Unauthorized /> } />
+          <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
       </div>
   );

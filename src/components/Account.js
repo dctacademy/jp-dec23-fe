@@ -1,15 +1,15 @@
 import { useAuth } from "../context/AuthContext"
 export default function Account() {
-    const { user } = useAuth()
+    const { user } = useAuth() 
     return (
         <div>
             <h2>Account Info</h2>
             { user && (
-                <div> 
-                    <p>Username - { user.username }</p>
-                    <p>Email - { user.email }</p>
-                    <p>Role - { user.role }</p>
-                </div> 
+                <>
+                    <p>Username - { user.account.username }</p>
+                    <p>email - { user.account.email } </p>
+                    <p>Role - { user.account.role }</p>    
+                </>
             )}
             
         </div>
