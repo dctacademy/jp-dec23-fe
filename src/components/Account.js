@@ -1,4 +1,6 @@
 import { useAuth } from "../context/AuthContext"
+import CandidateProfile from "./CandidateProfile"
+import RecruiterProfile from "./RecruiterProfile"
 export default function Account() {
     const { user } = useAuth() 
     return (
@@ -8,7 +10,9 @@ export default function Account() {
                 <>
                     <p>Username - { user.account.username }</p>
                     <p>email - { user.account.email } </p>
-                    <p>Role - { user.account.role }</p>    
+                    <p>Role - { user.account.role }</p>  
+
+                    { user.account.role == 'candidate' ? <CandidateProfile /> : <RecruiterProfile /> }  
                 </>
             )}
             

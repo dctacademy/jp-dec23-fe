@@ -48,7 +48,20 @@ export default function Login() {
                         Authorization: localStorage.getItem('token')
                     }
                 })
-                dispatch({ type: "LOGIN", payload: userResponse.data })
+                console.log(userResponse.data)
+                let url 
+                if(userResponse.data.role == 'candidate') {
+                    url = 'http://localhost:3333/api/candidates/profile'
+                } else {
+                    url = 'http://localhost:3333/api/recruiter/profile'
+                }
+                const profileResponse = await axios.get(url, { 
+                    headers: {
+                        Authorization: localStorage.getItem('token')
+                    }
+                })
+                console.log(profileResponse.data)
+                dispatch({ type: "LOGIN", payload: { account: userResponse.data, profile: profileResponse.data } })
                 navigate('/')
             } catch(err) {
                 setForm({...form, serverErrors: err.response.data.errors, clientErrors: {} })
