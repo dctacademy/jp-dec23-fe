@@ -6,6 +6,7 @@ import Login from "./components/Login";
 import Account from './components/Account';
 import AddJob from './components/AddJob';
 import ApplyJob from './components/ApplyJob';
+import MyJobs from './components/MyJobs';
 import PrivateRoute from './components/PrivateRoute';
 import Unauthorized from './components/Unauthorized';
 import { useAuth } from './context/AuthContext';
@@ -19,30 +20,39 @@ function App() {
   const conditionalLinks = (path, roles) => {
     switch(path) {
       case '/add-job' : {
-        if(roles.includes(user.account.role)) {
+        if(roles.includes(user?.account?.role)) {
           return <Link to={path}>Add Job</Link>
         }
       }
       case '/apply-job' : {
-        if(roles.includes(user.account.role)) {
+        if(roles.includes(user?.account?.role)) {
           return <Link to={path}>Apply job</Link>
         }
       }
+      // case '/my-jobs' : {
+      //   if(true) {
+      //     return <Link to={path}>My jobs</Link>
+      //   }
+      // }
     }
   }
 
   useEffect(() => {
     if(localStorage.getItem('token'))  {
+      
       (async () => {
+        console.log('app use effect')
         const response = await axios.get('http://localhost:3333/users/account', {
           headers: {
             Authorization: localStorage.getItem('token')
           }
         })
-        dispatch({ type: 'LOGIN', payload: response.data })
+        console.log(response.data)
+        dispatch({ type: 'LOGIN', payload: { account: response.data } })
       })();
     }
   }, [])
+
   return (
       <div>
         <h2>Job Portal</h2>
@@ -55,8 +65,12 @@ function App() {
         ) : (
           <>
             <Link to="/account">Account</Link> | 
+            <Link to="/my-jobs">My Jobs</Link> | 
+            <Link to="/add-job">Add Jobs</Link>
             { conditionalLinks('/add-job', ['admin', 'recruiter'])}
             { conditionalLinks('/apply-job', ['admin', 'candidate'])}
+            
+            
             
              |
             <Link to="/" onClick={() => {
@@ -81,6 +95,11 @@ function App() {
               <AddJob />
             </PrivateRoute>
           } />
+          <Route path="/my-jobs" element={
+            <PrivateRoute permittedRoles={['recruiter']}>
+              <MyJobs />
+            </PrivateRoute>
+          }/>
           <Route path="/apply-job" element={
             <PrivateRoute permittedRoles={['candidate']}>
               <ApplyJob />
