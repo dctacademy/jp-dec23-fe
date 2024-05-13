@@ -4,6 +4,7 @@ import axios from 'axios'
 export default function JobDetail(){
     const { id } = useParams()
     const [job, setJob] = useState(null)
+    const [candidateStatus,setCandidateStatus] = useState(null)
 
     const handleApply = async () => {
         try { 
@@ -12,8 +13,10 @@ export default function JobDetail(){
                     Authorization: localStorage.getItem('token')
                 }
             })
+            setCandidateStatus(response.data)
         } catch(err) {
             alert(err) 
+            console.log(err)
         }
     }
 
@@ -27,6 +30,24 @@ export default function JobDetail(){
             }
         })();
     }, [])
+
+    useEffect(() => {
+        if(localStorage.getItem('token')) {
+            (async() => {
+                try { 
+                    const response = await axios.get(`http://localhost:3333/api/applications/check/${id}`, { 
+                        headers : {
+                            Authorization: localStorage.getItem('token')
+                        }
+                    })
+                    setCandidateStatus(response.data)
+                } catch(err) {
+                    console.log(err) 
+                }
+            })();
+        }
+    }, [])
+
     return (
         <div>
             { job && (
@@ -41,8 +62,9 @@ export default function JobDetail(){
                     <p>Openings: { job.openings } </p>
                     <p>Last date to apply: { job.dueDate } </p>
                     <p>Recruiter: { job.recruiter }</p>
+                    <p>Status : { candidateStatus?.status } </p>
 
-                    { localStorage.getItem('token') ? <button onClick={handleApply}>Apply</button> : <p>Sign in to apply for the job</p> }
+                    { localStorage.getItem('token') ? <button onClick={handleApply}>Apply</button>  : <p>Sign in to apply for the job</p> }
                     
                 </div> 
             )}
