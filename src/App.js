@@ -6,6 +6,7 @@ import Login from "./components/Login";
 import Account from './components/Account';
 import AddJob from './components/AddJob';
 import ListJobs from './components/ListJobs';
+import JobDetail from './components/JobDetail';
 import ApplyJob from './components/ApplyJob';
 import MyJobs from './components/MyJobs';
 import PrivateRoute from './components/PrivateRoute';
@@ -87,6 +88,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/list-jobs" element={<ListJobs />} />
+          <Route path="/job-detail/:id" element={<JobDetail />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/account" element={
