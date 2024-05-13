@@ -37,6 +37,7 @@ export default function MyJob(){
                     <th>dueDate</th>
                     <th>minSalary</th>
                     <th>maxSalary</th>
+                    <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -54,7 +55,9 @@ export default function MyJob(){
                             <td>{ele.dueDate}</td>
                             <td>{ele?.salary?.minSalary}</td> 
                             <td>{ele?.salary?.maxSalary}</td>
-                            
+                            <td>
+
+                            </td>
 
                         </tr>
                     )

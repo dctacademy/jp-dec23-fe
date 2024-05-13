@@ -5,6 +5,7 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import Account from './components/Account';
 import AddJob from './components/AddJob';
+import ListJobs from './components/ListJobs';
 import ApplyJob from './components/ApplyJob';
 import MyJobs from './components/MyJobs';
 import PrivateRoute from './components/PrivateRoute';
@@ -57,8 +58,10 @@ function App() {
       <div>
         <h2>Job Portal</h2>
         <Link to="/">Home</Link> |
+        <Link to="/list-jobs">List Jobs</Link> | 
         { !user.isLoggedIn ? (
           <>
+          
           <Link to="/register">Register</Link> |
           <Link to="/login"> Login </Link> | 
           </>
@@ -79,11 +82,11 @@ function App() {
             }}> logout </Link> | 
           </>
         )}
-        
-             
+      
             
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/list-jobs" element={<ListJobs />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/account" element={
