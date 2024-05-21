@@ -1,5 +1,6 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { Link } from 'react-router-dom' 
 
 export default function MyJob(){
     const[job,setJob] = useState([])
@@ -44,7 +45,7 @@ export default function MyJob(){
                  {job.map((ele)=>{
                     return (
                         <tr key={ele._id}>
-                            <td>{ele.title}</td>
+                            <td><Link to={`/job-applications/${ele._id}`}>{ele.title}</Link></td>
                             <td>{ele.description}</td>
                             <td>{ele.openings}</td>
                             <td>{ele.location}</td>
@@ -56,9 +57,7 @@ export default function MyJob(){
                             <td>{ele?.salary?.minSalary}</td> 
                             <td>{ele?.salary?.maxSalary}</td>
                             <td>
-
                             </td>
-
                         </tr>
                     )
                  })}

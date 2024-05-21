@@ -1,7 +1,7 @@
 
 import { useState } from 'react' 
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios' 
+import axios from '../config/axios'
 import validator from 'validator'
 export default function Register() {
     const navigate = useNavigate()
@@ -54,7 +54,7 @@ export default function Register() {
 
         if(Object.keys(errors).length == 0) {
             try {
-                const response = await axios.post('http://localhost:3333/users/register', formData) 
+                const response = await axios.post('/users/register', formData) 
                 navigate('/login')
             } catch(err) {
                 setServerErrors(err.response.data.errors)

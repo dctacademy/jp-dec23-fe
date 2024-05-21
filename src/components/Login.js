@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import validator from 'validator'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import axios from '../config/axios'
 import _ from 'lodash'
 import { useAuth } from '../context/AuthContext'
 export default function Login() {

@@ -4,6 +4,7 @@ export default function PrivateRoute({ permittedRoles, children}){
     const { user } = useAuth() 
     console.log('pr', user)
     
+    // handling page reload
     if(!user.isLoggedIn && localStorage.getItem('token')) {
         return <p>loading...</p>
     }

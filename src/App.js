@@ -11,6 +11,8 @@ import ApplyJob from './components/ApplyJob';
 import MyJobs from './components/MyJobs';
 import PrivateRoute from './components/PrivateRoute';
 import Unauthorized from './components/Unauthorized';
+import JobApplications from './components/JobApplicants';
+import SingleApplication from './components/SingleApplication';
 import { useAuth } from './context/AuthContext';
 import { useEffect } from 'react';
 
@@ -41,7 +43,6 @@ function App() {
 
   useEffect(() => {
     if(localStorage.getItem('token'))  {
-      
       (async () => {
         console.log('app use effect')
         const response = await axios.get('http://localhost:3333/users/account', {
@@ -50,7 +51,9 @@ function App() {
           }
         })
         console.log(response.data)
-        dispatch({ type: 'LOGIN', payload: { account: response.data } })
+        setTimeout(() => {
+          dispatch({ type: 'LOGIN', payload: { account: response.data } })       
+        }, 3000)
       })();
     }
   }, [])
@@ -110,6 +113,19 @@ function App() {
               <ApplyJob />
             </PrivateRoute>
           } />
+
+          <Route path="/job-applications/:id" element={
+            <PrivateRoute permittedRoles={['recruiter']}>
+              <JobApplications />
+            </PrivateRoute>
+          }/>
+
+          <Route path="/jobs/:id/single-application/:appId" element={
+            <PrivateRoute permittedRoles={['recruiter']}>
+              <SingleApplication />
+            </PrivateRoute>
+          }
+          />
 
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
